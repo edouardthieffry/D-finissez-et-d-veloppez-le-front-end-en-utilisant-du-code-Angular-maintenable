@@ -34,6 +34,27 @@ src/app/
 
 Modèles
 
+on crée des modèles de données pour ne pas avoir a dupliquer le code partout, on pourra y associer plus tard des methodes qui feront le lien avec les données du services. on y type les données de manière strict.
+
 Olympic : { id, country, participations: Participation[] }.
 Participation : { id, year, city, medalsCount, athleteCount }.
 Stat : { label, value } — indicateur générique affiché par le header.
+
+
+Service
+
+olympic.service.ts On y centralise les données en l'injectant à la racine du projet pour quelles soient disponible et modifiable partout, cela nous permettra d'implementer plus facilement la liaison avec le Back-end en ne modifiant que ce fichier pour le traitement des données, (Ajout, Suppression)
+
+Pages
+
+on differencie nos deux page qui appeleront chacun leurs composants nécessaire.
+Elles heriteront de app.component, qui integrera le header (Titre + navigation) et le composant de gestion de route <router-outlet />
+
+Components
+
+Dans chaque dossier de composant, on à les trois fichiers relatif aux composants (.html, .scss, .ts)
+
+
+
+
+
