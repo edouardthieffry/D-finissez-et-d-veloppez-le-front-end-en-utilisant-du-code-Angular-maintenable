@@ -6,9 +6,20 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { CountryComponent } from "./pages/country/country.component";
+import { PageHeaderComponent } from './components/page-header/page-header.component';
+import { StatListComponent } from './components/stat-list/stat-list.component';
+import { StatComponent } from './components/stat/stat.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, NotFoundComponent, CountryComponent],
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    NotFoundComponent, 
+    CountryComponent,
+    PageHeaderComponent,
+    StatListComponent,
+    StatComponent  
+  ],
   imports: [BrowserModule, AppRoutingModule],
   providers: [provideHttpClient()],
   bootstrap: [AppComponent],

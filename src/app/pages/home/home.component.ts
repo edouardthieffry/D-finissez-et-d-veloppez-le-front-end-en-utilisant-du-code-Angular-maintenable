@@ -2,6 +2,9 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import Chart from 'chart.js/auto';
+import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
+import {PageHeader} from 'src/app/models/page-header';
+import {Stat} from 'src/app/models/stat';
 
 @Component({
   selector: 'app-home',
@@ -14,11 +17,14 @@ export class HomeComponent implements OnInit {
   public totalCountries: number = 0
   public totalJOs: number = 0
   public error!:string
-  titlePage: string = "Medals per Country";
 
   constructor(private router: Router, private http:HttpClient) { }
 
+  pageHeader !: PageHeader;
+  statList !: Stat[];
+
   ngOnInit() {
+
     this.http.get<any[]>(this.olympicUrl).pipe().subscribe(
       (data) => {
         console.log(`Liste des données : ${JSON.stringify(data)}`);
@@ -26,9 +32,14 @@ export class HomeComponent implements OnInit {
           this.totalJOs = Array.from(new Set(data.map((i: any) => i.participations.map((f: any) => f.year)).flat())).length;
           const countries: string[] = data.map((i: any) => i.country);
           this.totalCountries = countries.length;
+          this.statList =[
+              new Stat("Total Countries", this.totalCountries),
+              new Stat("Total JOs", this.totalJOs)
+          ];          
           const medals = data.map((i: any) => i.participations.map((i: any) => (i.medalsCount)));
           const sumOfAllMedalsYears = medals.map((i) => i.reduce((acc: any, i: any) => acc + i, 0));
           this.buildPieChart(countries, sumOfAllMedalsYears);
+          this.pageHeader = new PageHeader("Medals per Country", this.statList);
         }
       },
       (error:HttpErrorResponse) => {
@@ -36,6 +47,7 @@ export class HomeComponent implements OnInit {
         this.error = error.message
       }
     )
+
   }
 
   buildPieChart(countries: string[], sumOfAllMedalsYears: number[]) {
