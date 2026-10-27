@@ -2,7 +2,6 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import Chart from 'chart.js/auto';
-import { PageHeaderComponent } from 'src/app/components/page-header/page-header.component';
 import {PageHeader} from 'src/app/models/page-header';
 import {Stat} from 'src/app/models/stat';
 

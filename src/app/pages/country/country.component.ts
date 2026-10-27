@@ -2,7 +2,8 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import Chart from 'chart.js/auto';
-
+import {PageHeader} from 'src/app/models/page-header';
+import {Stat} from 'src/app/models/stat';
 
 @Component({
   selector: 'app-country',
@@ -21,6 +22,9 @@ export class CountryComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient) {
   }
 
+  pageHeader !: PageHeader;
+  statList !: Stat[];
+
   ngOnInit() {
     let countryName: string | null = null
     this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName'));
@@ -37,6 +41,12 @@ export class CountryComponent implements OnInit {
           const nbAthletes = selectedCountry?.participations.map((i: any) => i.athleteCount.toString()) ?? []
           this.totalAthletes = nbAthletes.reduce((accumulator: any, item: any) => accumulator + parseInt(item), 0);
           this.buildChart(years, medals);
+           this.statList =[
+              new Stat("Total participations", this.totalEntries),
+              new Stat("Total medals", this.totalMedals),
+              new Stat("Total athletes", this.totalAthletes)
+          ];  
+          this.pageHeader = new PageHeader(this.titlePage, this.statList);
         }
       },
       (error: HttpErrorResponse) => {
