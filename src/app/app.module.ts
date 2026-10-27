@@ -9,6 +9,7 @@ import { CountryComponent } from "./pages/country/country.component";
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { StatListComponent } from './components/stat-list/stat-list.component';
 import { StatComponent } from './components/stat/stat.component';
+import { AppHeaderComponent } from './components/app-header/app-header.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { StatComponent } from './components/stat/stat.component';
     CountryComponent,
     PageHeaderComponent,
     StatListComponent,
-    StatComponent  
+    StatComponent,
+    AppHeaderComponent,
   ],
   imports: [BrowserModule, AppRoutingModule],
   providers: [provideHttpClient()],
