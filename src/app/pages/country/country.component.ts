@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
-import Chart from 'chart.js/auto';
+import {ActivatedRoute, ParamMap} from '@angular/router';
+import {LineChart} from 'src/app/models/line-chart';
 import {PageHeader} from 'src/app/models/page-header';
 import {Stat} from 'src/app/models/stat';
 import {DataOlympicService} from 'src/app/services/olympic.service';
@@ -11,13 +11,12 @@ import {DataOlympicService} from 'src/app/services/olympic.service';
   styleUrls: ['./country.component.scss']
 })
 export class CountryComponent implements OnInit {
-  public lineChart!: Chart<"line", string[], number>;
-
   constructor(private route: ActivatedRoute, private dataOlympicService: DataOlympicService) {
   }
 
   pageHeader !: PageHeader;
   statList !: Stat[];
+  lineChart!: LineChart;
 
   ngOnInit() {
     let countryName: string | null = null
@@ -27,26 +26,11 @@ export class CountryComponent implements OnInit {
         new Stat("Total medals", this.dataOlympicService.getCountryTotalMedals(countryName!)),
         new Stat("Total athletes", this.dataOlympicService.getCountryTotalAthletes(countryName!))
     ]);
-    this.buildChart(this.dataOlympicService.getArrayOfYearsByCountryId(countryName!), this.dataOlympicService.getArrayOfMedalsByParticipationCountryId(countryName!));
-  }
-
-  buildChart(years: number[], medals: string[]) {
-    const lineChart = new Chart("countryChart", {
-      type: 'line',
-      data: {
-        labels: years,
-        datasets: [
-          {
-            label: "medals",
-            data: medals,
-            backgroundColor: '#0b868f'
-          },
-        ]
-      },
-      options: {
-        aspectRatio: 2.5
-      }
-    });
-    this.lineChart = lineChart;
+    this.lineChart = new LineChart(
+      'countryChart',
+      'Medals',
+      this.dataOlympicService.getArrayOfYearsByCountryId(countryName!),
+      this.dataOlympicService.getArrayOfMedalsByParticipationCountryId(countryName!),
+    );
   }
 }

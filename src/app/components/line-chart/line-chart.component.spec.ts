@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LineChartComponent } from './line-chart.component';
+import { LineChart } from 'src/app/models/line-chart';
 
 describe('LineChartComponent', () => {
   let component: LineChartComponent;
@@ -14,10 +14,16 @@ describe('LineChartComponent', () => {
 
     fixture = TestBed.createComponent(LineChartComponent);
     component = fixture.componentInstance;
+    component.lineChart = new LineChart('test-chart', [2020], [1]);
+    spyOn(component.lineChart, 'buildChart');
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should build the line chart after the view initializes', () => {
+    expect(component.lineChart.buildChart).toHaveBeenCalled();
   });
 });

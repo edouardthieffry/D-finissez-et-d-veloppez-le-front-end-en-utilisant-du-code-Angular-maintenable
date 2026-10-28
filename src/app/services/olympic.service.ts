@@ -69,9 +69,9 @@ export class DataOlympicService {
         return participations.map(participation => participation.year);
     }
     
-    getArrayOfMedalsByParticipationCountryId(countryName: string): string[] {
+    getArrayOfMedalsByParticipationCountryId(countryName: string): number[] {
         const participations = this.getParticipationDataByCountryId(countryName);
-        return participations.map(participation => participation.medalsCount.toString());
+        return participations.map(participation => participation.medalsCount);
     }
 
     getYearEdition(): number[] {
