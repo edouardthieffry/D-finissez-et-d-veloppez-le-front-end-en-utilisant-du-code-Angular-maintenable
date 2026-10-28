@@ -10,6 +10,7 @@ import { PageHeaderComponent } from './components/page-header/page-header.compon
 import { StatListComponent } from './components/stat-list/stat-list.component';
 import { StatComponent } from './components/stat/stat.component';
 import { AppHeaderComponent } from './components/app-header/app-header.component';
+import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { AppHeaderComponent } from './components/app-header/app-header.component
     StatListComponent,
     StatComponent,
     AppHeaderComponent,
+    PieChartComponent
   ],
   imports: [BrowserModule, AppRoutingModule],
   providers: [provideHttpClient()],
