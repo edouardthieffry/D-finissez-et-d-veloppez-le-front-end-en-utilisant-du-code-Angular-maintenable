@@ -64,7 +64,6 @@ export class DataOlympicService {
         const participations = this.getParticipationDataByCountryId(countryName);
         return participations.length;
     }
-
     getArrayOfYearsByCountryId(countryName: string): number[] {
         const participations = this.getParticipationDataByCountryId(countryName);
         return participations.map(participation => participation.year);
@@ -74,4 +73,30 @@ export class DataOlympicService {
         const participations = this.getParticipationDataByCountryId(countryName);
         return participations.map(participation => participation.medalsCount.toString());
     }
+
+    getYearEdition(): number[] {
+        const yearEdition: number[] = [];
+        this.olympicData.forEach(country => {
+            country.participations.forEach(participation => {
+                if (!yearEdition.includes(participation.year)) {
+                    yearEdition.push(participation.year);
+                }
+            });
+        });
+        return yearEdition;
+    }
+
+    getTotalJOs(): number {
+        return this.getYearEdition().length;
+    }
+    getTotalCountries(): number {
+        return this.olympicData.length;
+    }
+    getArrayTotalMedalsByCountry(): number[] {
+        return this.olympicData.map(country => this.getCountryTotalMedals(country.country));
+    }
+    getArrayOfCountries(): string[] {
+        return this.olympicData.map(country => country.country);
+    }
+
 }

@@ -12,11 +12,6 @@ import {DataOlympicService} from 'src/app/services/olympic.service';
 })
 export class CountryComponent implements OnInit {
   public lineChart!: Chart<"line", string[], number>;
-  public titlePage: string = '';
-  public totalEntries: any = 0;
-  public totalMedals: number = 0;
-  public totalAthletes: number = 0;
-  public error!: string;
 
   constructor(private route: ActivatedRoute, private dataOlympicService: DataOlympicService) {
   }
@@ -26,21 +21,13 @@ export class CountryComponent implements OnInit {
 
   ngOnInit() {
     let countryName: string | null = null
-    this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName'));
-    this.totalEntries = this.dataOlympicService.getCountryTotalParticipations(countryName!);
-    this.totalMedals = this.dataOlympicService.getCountryTotalMedals(countryName!);
-    this.totalAthletes = this.dataOlympicService.getCountryTotalAthletes(countryName!);
-    const years = this.dataOlympicService.getArrayOfYearsByCountryId(countryName!);
-    const medals = this.dataOlympicService.getArrayOfMedalsByParticipationCountryId(countryName!);
-    this.titlePage = countryName!;
-    this.statList =[
-        new Stat("Total participations", this.totalEntries),
-        new Stat("Total medals", this.totalMedals),
-        new Stat("Total athletes", this.totalAthletes)
-    ];  
-  
-    this.pageHeader = new PageHeader(this.titlePage, this.statList);
-    this.buildChart(years, medals);
+    this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName'));  
+    this.pageHeader = new PageHeader(countryName!, [
+        new Stat("Total participations", this.dataOlympicService.getCountryTotalParticipations(countryName!)),
+        new Stat("Total medals", this.dataOlympicService.getCountryTotalMedals(countryName!)),
+        new Stat("Total athletes", this.dataOlympicService.getCountryTotalAthletes(countryName!))
+    ]);
+    this.buildChart(this.dataOlympicService.getArrayOfYearsByCountryId(countryName!), this.dataOlympicService.getArrayOfMedalsByParticipationCountryId(countryName!));
   }
 
   buildChart(years: number[], medals: string[]) {

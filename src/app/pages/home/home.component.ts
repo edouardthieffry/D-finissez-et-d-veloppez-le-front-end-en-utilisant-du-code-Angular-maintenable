@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import Chart from 'chart.js/auto';
 import {PageHeader} from 'src/app/models/page-header';
 import {Stat} from 'src/app/models/stat';
+import {DataOlympicService} from 'src/app/services/olympic.service';
 
 @Component({
   selector: 'app-home',
@@ -11,42 +12,20 @@ import {Stat} from 'src/app/models/stat';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  private olympicUrl = './assets/mock/olympic.json';
   public pieChart!: Chart<"pie", number[], string>;
-  public totalCountries: number = 0
-  public totalJOs: number = 0
-  public error!:string
+ 
 
-  constructor(private router: Router, private http:HttpClient) { }
+  constructor(private router: Router, private dataOlympicService: DataOlympicService) { }
 
   pageHeader !: PageHeader;
   statList !: Stat[];
 
   ngOnInit() {
-
-    this.http.get<any[]>(this.olympicUrl).pipe().subscribe(
-      (data) => {
-        console.log(`Liste des données : ${JSON.stringify(data)}`);
-        if (data && data.length > 0) {
-          this.totalJOs = Array.from(new Set(data.map((i: any) => i.participations.map((f: any) => f.year)).flat())).length;
-          const countries: string[] = data.map((i: any) => i.country);
-          this.totalCountries = countries.length;
-          this.statList =[
-              new Stat("Total Countries", this.totalCountries),
-              new Stat("Total JOs", this.totalJOs)
-          ];          
-          const medals = data.map((i: any) => i.participations.map((i: any) => (i.medalsCount)));
-          const sumOfAllMedalsYears = medals.map((i) => i.reduce((acc: any, i: any) => acc + i, 0));
-          this.buildPieChart(countries, sumOfAllMedalsYears);
-          this.pageHeader = new PageHeader("Medals per Country", this.statList);
-        }
-      },
-      (error:HttpErrorResponse) => {
-        console.log(`erreur : ${error}`);
-        this.error = error.message
-      }
-    )
-
+    this.pageHeader = new PageHeader("Medals per Country", [
+        new Stat("Total Countries", this.dataOlympicService.getTotalCountries()),
+        new Stat("Total JOs", this.dataOlympicService.getTotalJOs())
+    ]);
+    this.buildPieChart(this.dataOlympicService.getArrayOfCountries(), this.dataOlympicService.getArrayTotalMedalsByCountry());
   }
 
   buildPieChart(countries: string[], sumOfAllMedalsYears: number[]) {
