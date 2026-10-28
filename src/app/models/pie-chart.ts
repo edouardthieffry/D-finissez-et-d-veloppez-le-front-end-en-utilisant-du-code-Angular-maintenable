@@ -1,4 +1,5 @@
 import Chart from 'chart.js/auto';
+import type { ActiveElement } from 'chart.js';
 
 export class PieChart {
     public title !: string;
@@ -7,13 +8,13 @@ export class PieChart {
     public data !: number[];
     public chart ?: Chart;
 
-    constructor(title: string, canvasId: string, labels: string[], data: number[]) {
+    constructor(title: string, canvasId:   string, labels: string[], data: number[]) {
         this.title = title;
         this.canvasId = canvasId;
         this.labels = labels;
         this.data = data;
     }
-    buildChart(){
+    buildChart(emitCountry: (countryName: string) => void){
         this.chart = new Chart(this.canvasId, {
             type: 'pie',
             data: {
@@ -27,26 +28,21 @@ export class PieChart {
             },
             options: {
                 aspectRatio: 2.5,
+                onClick: (_event, elements) => this.onCountryClick(elements, emitCountry),
             }
             
         });
     }
-    handleClickCountry(){
-        const chart = this.chart;
-        if(!chart){
+
+    private onCountryClick(elements: ActiveElement[], emitCountry: (countryName: string) => void): void {
+        const selectedElement = elements[0];
+        if (!selectedElement) {
             return;
-        }else{
-            chart.options.onClick = (evt,element) => {
-                    if (evt.native) {
-                        const points = chart.getElementsAtEventForMode(evt.native, 'point', { intersect: true }, true)
-                        if (points.length) {
-                            const firstPoint = points[0];
-                            const countryName = chart.data.labels ? chart.data.labels[firstPoint.index] : '';
-                            console.log('navigateByUrl');
-                        }
-                    }
-                }
         }
-    
+
+        const countryName = this.labels[selectedElement.index];
+        if (countryName !== undefined) {
+            emitCountry(countryName);
+        }
     }
 }

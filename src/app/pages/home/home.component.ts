@@ -30,5 +30,8 @@ export class HomeComponent implements OnInit {
       this.dataOlympicService.getArrayTotalMedalsByCountry(),
     );
   }
-}
 
+  onCountrySelected(countryName: string): void {
+    this.router.navigate(['/country', countryName]);
+  }
+}

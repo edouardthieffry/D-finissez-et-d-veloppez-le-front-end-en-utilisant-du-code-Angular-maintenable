@@ -1,6 +1,5 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { PieChart } from 'src/app/models/pie-chart';
-import Chart from 'chart.js/auto'; 
 
 @Component({
   selector: 'app-pie-chart',
@@ -9,8 +8,10 @@ import Chart from 'chart.js/auto';
 })
 export class PieChartComponent implements AfterViewInit {
   @Input() pieChart !: PieChart;
+
+  @Output() countrySelected = new EventEmitter<string>();
+
   ngAfterViewInit() {
-    this.pieChart.buildChart();
-    this.pieChart.handleClickCountry();
+    this.pieChart.buildChart((countryName) => this.countrySelected.emit(countryName));
   }
 }
