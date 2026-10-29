@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import { Router } from '@angular/router';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import {LineChart} from 'src/app/models/line-chart';
 import {PageHeader} from 'src/app/models/page-header';
@@ -11,7 +12,7 @@ import {DataOlympicService} from 'src/app/services/olympic.service';
   styleUrls: ['./country.component.scss']
 })
 export class CountryComponent implements OnInit {
-  constructor(private route: ActivatedRoute, private dataOlympicService: DataOlympicService) {
+  constructor(private route: ActivatedRoute, private dataOlympicService: DataOlympicService, private router: Router) {
   }
 
   pageHeader !: PageHeader;
@@ -19,9 +20,15 @@ export class CountryComponent implements OnInit {
   lineChart!: LineChart;
 
   ngOnInit() {
-    let countryName: string | null = null
-    this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName'));  
-    this.pageHeader = new PageHeader(countryName!, [
+  const countryName = this.route.snapshot.paramMap.get('countryName');
+  const countries = this.dataOlympicService.getArrayOfCountries();
+
+  if (!countryName || !countries.includes(countryName)) {
+    this.router.navigate(['/not-found']);
+    return;
+  }
+    
+    this.pageHeader = new PageHeader(countryName, [
         new Stat("Total participations", this.dataOlympicService.getCountryTotalParticipations(countryName!)),
         new Stat("Total medals", this.dataOlympicService.getCountryTotalMedals(countryName!)),
         new Stat("Total athletes", this.dataOlympicService.getCountryTotalAthletes(countryName!))

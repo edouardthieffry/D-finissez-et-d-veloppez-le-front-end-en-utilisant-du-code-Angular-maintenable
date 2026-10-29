@@ -17,7 +17,6 @@ export class HomeComponent implements OnInit {
   pageHeader !: PageHeader;
   statList !: Stat[];
   pieChart !: PieChart
-
   ngOnInit() {
     this.pageHeader = new PageHeader("Medals per Country", [
         new Stat("Total Countries", this.dataOlympicService.getTotalCountries()),

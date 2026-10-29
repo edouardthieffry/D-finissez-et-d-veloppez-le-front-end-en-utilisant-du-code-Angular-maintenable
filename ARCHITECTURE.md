@@ -13,16 +13,18 @@ src/app/
 ├── models/
 │  ├── olympic.ts                # interface Olympic
 │  ├── participation.ts          # interface Participation
+│  ├── pie-chart.ts              # interface PieChart
+│  ├── line-chart.ts             # interface LineChart
 │  └── stat.ts                   # interface StatItem (indicateur libellé/valeur)
 ├── services/
 │  └── olympic.service.ts        # Accès centralisé aux données
 
 
-├── components/                  # composants réutilisables (UI)
+├── components/                  # composants réutilisables
 │   ├── app-header/              # header de l'app avec navigation 
 │   ├── stat/                    # Stats item title + value 
 │   ├── page-header/             # Title + liste Stats item title + value 
-│   ├── pie-chart/               # Diagramme Chart 
+│   ├── pie-chart/               # Diagramme Chart + navigation
 │   ├── line-chart/              # Diagramme courbe 
 │   └── loading/                 # indicateur de chargement (spinner)
 │
@@ -39,6 +41,8 @@ on crée des modèles de données pour ne pas avoir a dupliquer le code partout,
 Olympic : { id, country, participations: Participation[] }.
 Participation : { id, year, city, medalsCount, athleteCount }.
 Stat : { label, value } — indicateur générique affiché par le header.
+PieChart : { title, canvasId, labels, data, chart }
+LineChart : { title, canvasId, labels, data, chart }
 
 
 Service
