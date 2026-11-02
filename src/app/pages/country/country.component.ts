@@ -15,7 +15,7 @@ export class CountryComponent {
   private readonly _dataOlympicService = inject(DataOlympicService);
   private readonly _router = inject(Router);
 
-  readonly viewModel$ = this._route.paramMap.pipe(
+  public readonly viewModel$ = this._route.paramMap.pipe(
     switchMap(params => {
       const countryName = params.get('countryName');
       if (!countryName) {
@@ -31,27 +31,20 @@ export class CountryComponent {
           }
 
           return combineLatest({
-            participations: this._dataOlympicService.getCountryTotalParticipations(countryName),
-            medals: this._dataOlympicService.getCountryTotalMedals(countryName),
-            athletes: this._dataOlympicService.getCountryTotalAthletes(countryName),
-            years: this._dataOlympicService.getArrayOfYearsByCountryId(countryName),
-            medalsByYear: this._dataOlympicService.getArrayOfMedalsByParticipationCountryId(countryName)
+            stats: this._dataOlympicService.getStatisticsByCountry(countryName),
+            chartData: this._dataOlympicService.getCountryChartData(countryName)
           }).pipe(
             map(data => ({
               status: 'ready' as const,
               pageHeader: {
                 title: country.country,
-                stats: [
-                  { title: 'Total participations', value: data.participations },
-                  { title: 'Total medals', value: data.medals },
-                  { title: 'Total athletes', value: data.athletes }
-                ]
-              } satisfies PageHeader,
+                stats: data.stats?.stats ?? []
+              },
               lineChart: new LineChart(
                 'countryChart',
                 'Medals',
-                data.years,
-                data.medalsByYear
+                data.chartData.years,
+                data.chartData.medals
               )
             }))
           ).pipe(startWith({status: 'loading' as const}));

@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, combineLatest, map, of, startWith } from 'rxjs';
 import { PieChart } from 'src/app/models/pie-chart';
-import type { PageHeader } from 'src/app/models/page-header';
 import { DataOlympicService } from 'src/app/services/olympic.service';
 
 @Component({
@@ -15,21 +14,16 @@ export class HomeComponent {
   private readonly _dataOlympicService = inject(DataOlympicService);
 
   readonly dashboard$ = combineLatest({
-    totalCountries: this._dataOlympicService.getTotalCountries(),
-    totalJOs: this._dataOlympicService.getTotalJOs(),
-    countries: this._dataOlympicService.getArrayOfCountries(),
-    totalMedals: this._dataOlympicService.getArrayTotalMedalsByCountry()
+    olympicStatistics: this._dataOlympicService.getOlympicStatistics(),
+    chartData: this._dataOlympicService.getOlympicChartData()
   }).pipe(
-    map(({ totalCountries, totalJOs, countries, totalMedals }) => ({
+    map(({ olympicStatistics, chartData }) => ({
       status: 'ready' as const,
       pageHeader: {
         title: 'Medals per Country',
-        stats: [
-          { title: 'Total Countries', value: totalCountries },
-          { title: 'Total JOs', value: totalJOs }
-        ]
-      } satisfies PageHeader,
-      pieChart: new PieChart('Medals', 'DashboardPieChart', countries, totalMedals)
+        stats: olympicStatistics.stats
+      },
+      pieChart: new PieChart('Medals', 'DashboardPieChart', chartData.countries, chartData.medals)
     })),
     startWith({ status: 'loading' as const }),
     catchError(error => {
