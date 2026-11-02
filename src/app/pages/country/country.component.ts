@@ -1,9 +1,8 @@
 import {Component, inject} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {catchError, combineLatest, map, of, startWith, switchMap} from 'rxjs';
-import {LineChart} from 'src/app/models/line-chart';
-import {PageHeader} from 'src/app/models/page-header';
-import {Stat} from 'src/app/models/stat';
+import { LineChart } from 'src/app/models/line-chart';
+import type { PageHeader } from 'src/app/models/page-header';
 import {DataOlympicService} from 'src/app/services/olympic.service';
 
 @Component({
@@ -40,11 +39,14 @@ export class CountryComponent {
           }).pipe(
             map(data => ({
               status: 'ready' as const,
-              pageHeader: new PageHeader(country.country, [
-                new Stat('Total participations', data.participations),
-                new Stat('Total medals', data.medals),
-                new Stat('Total athletes', data.athletes)
-              ]),
+              pageHeader: {
+                title: country.country,
+                stats: [
+                  { title: 'Total participations', value: data.participations },
+                  { title: 'Total medals', value: data.medals },
+                  { title: 'Total athletes', value: data.athletes }
+                ]
+              } satisfies PageHeader,
               lineChart: new LineChart(
                 'countryChart',
                 'Medals',

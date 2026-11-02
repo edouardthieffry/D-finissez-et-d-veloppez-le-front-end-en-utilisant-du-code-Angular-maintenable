@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
-import { LineChart } from 'src/app/models/line-chart';
+import type { LineChart } from 'src/app/models/line-chart';
 
 @Component({
   selector: 'app-line-chart',

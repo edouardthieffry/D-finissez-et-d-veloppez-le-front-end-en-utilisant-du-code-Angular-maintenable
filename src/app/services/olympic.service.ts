@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable, of, shareReplay, switchMap, throwError } from 'rxjs';
-import { Country } from '../models/country';
-import { Participation } from '../models/participation';
+import type { Country } from '../models/country';
+import type { Participation } from '../models/participation';
 
 @Injectable({
   providedIn: 'root'

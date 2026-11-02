@@ -1,10 +1,6 @@
-import { Stat } from "./stat";
+import type { Stat } from './stat';
 
-export class PageHeader {
-    public title!: string;
-    public stats!: Stat[];
-    constructor(title: string, stats: Stat[]) {
-        this.title = title;
-        this.stats = stats;
-    }
+export interface PageHeader {
+  readonly title: string;
+  readonly stats: Stat[];
 }

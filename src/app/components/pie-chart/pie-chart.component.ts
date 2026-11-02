@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
-import { PieChart } from 'src/app/models/pie-chart';
+import type { PieChart } from 'src/app/models/pie-chart';
 
 @Component({
   selector: 'app-pie-chart',

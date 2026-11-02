@@ -1,9 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, combineLatest, map, of, startWith } from 'rxjs';
-import { PageHeader } from 'src/app/models/page-header';
 import { PieChart } from 'src/app/models/pie-chart';
-import { Stat } from 'src/app/models/stat';
+import type { PageHeader } from 'src/app/models/page-header';
 import { DataOlympicService } from 'src/app/services/olympic.service';
 
 @Component({
@@ -23,10 +22,13 @@ export class HomeComponent {
   }).pipe(
     map(({ totalCountries, totalJOs, countries, totalMedals }) => ({
       status: 'ready' as const,
-      pageHeader: new PageHeader('Medals per Country', [
-        new Stat('Total Countries', totalCountries),
-        new Stat('Total JOs', totalJOs)
-      ]),
+      pageHeader: {
+        title: 'Medals per Country',
+        stats: [
+          { title: 'Total Countries', value: totalCountries },
+          { title: 'Total JOs', value: totalJOs }
+        ]
+      } satisfies PageHeader,
       pieChart: new PieChart('Medals', 'DashboardPieChart', countries, totalMedals)
     })),
     startWith({ status: 'loading' as const }),

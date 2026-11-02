@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Stat } from 'src/app/models/stat';
+import type { Stat } from 'src/app/models/stat';
 
 @Component({
   selector: 'app-stat',
