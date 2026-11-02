@@ -7,10 +7,10 @@ import { Router } from '@angular/router';
   styleUrl: './app-header.component.scss'
 })
 export class AppHeaderComponent {
-  constructor(private router: Router) {}
+  constructor(private readonly _router: Router) {}
 
   isHome(): boolean {
-    return this.router.isActive('/', {
+    return this._router.isActive('/', {
       paths: 'exact',
       queryParams: 'ignored',
       fragment: 'ignored',

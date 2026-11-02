@@ -1,2 +1,18 @@
-<app-page-header [pageHeader]="pageHeader"/>
-<app-pie-chart [pieChart]="pieChart" (countrySelected)="onCountrySelected($event)"/>
+@if (pageHeader$ | async; as pageHeaderState) {
+  @if (pageHeaderState.status === 'ready') {
+    <app-page-header [pageHeader]="pageHeaderState.pageHeader"></app-page-header>
+  } @else {
+    <p role="alert">Impossible de charger les statistiques. Réessayez plus tard.</p>
+  }
+}
+
+@if (pieChart$ | async; as pieChartState) {
+  @if (pieChartState.status === 'ready') {
+    <app-pie-chart
+      [pieChart]="pieChartState.pieChart"
+      (countrySelected)="onCountrySelected($event)">
+    </app-pie-chart>
+  } @else {
+    <p role="alert">Impossible de charger le graphique. Réessayez plus tard.</p>
+  }
+}
