@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {catchError, combineLatest, map, of, switchMap} from 'rxjs';
+import {catchError, combineLatest, map, of, startWith, switchMap} from 'rxjs';
 import {LineChart} from 'src/app/models/line-chart';
 import {PageHeader} from 'src/app/models/page-header';
 import {Stat} from 'src/app/models/stat';
@@ -52,7 +52,7 @@ export class CountryComponent {
                 data.medalsByYear
               )
             }))
-          );
+          ).pipe(startWith({status: 'loading' as const}));
         }),
       );
     }),

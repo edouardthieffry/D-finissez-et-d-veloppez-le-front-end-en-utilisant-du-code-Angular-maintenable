@@ -2,6 +2,8 @@
   @if (viewModel.status === 'ready') {
     <app-page-header [pageHeader]="viewModel.pageHeader"></app-page-header>
     <app-line-chart [lineChart]="viewModel.lineChart"></app-line-chart>
+  } @else if (viewModel.status === 'loading') {
+    <app-spinner label="Chargement des données du pays…"></app-spinner>
   } @else if (viewModel.status === 'error') {
     <p role="alert">Impossible de charger les données de ce pays. Réessayez plus tard.</p>
   }

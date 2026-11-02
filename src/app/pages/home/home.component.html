@@ -1,6 +1,8 @@
 @if (pageHeader$ | async; as pageHeaderState) {
   @if (pageHeaderState.status === 'ready') {
     <app-page-header [pageHeader]="pageHeaderState.pageHeader"></app-page-header>
+  } @else if (pageHeaderState.status === 'loading') {
+    <app-spinner label="Chargement des statistiques…"></app-spinner>
   } @else {
     <p role="alert">Impossible de charger les statistiques. Réessayez plus tard.</p>
   }
@@ -12,6 +14,8 @@
       [pieChart]="pieChartState.pieChart"
       (countrySelected)="onCountrySelected($event)">
     </app-pie-chart>
+  } @else if (pieChartState.status === 'loading') {
+    <app-spinner label="Chargement du graphique…"></app-spinner>
   } @else {
     <p role="alert">Impossible de charger le graphique. Réessayez plus tard.</p>
   }

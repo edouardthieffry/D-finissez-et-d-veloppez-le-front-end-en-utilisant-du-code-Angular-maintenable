@@ -12,6 +12,7 @@ import { StatComponent } from './components/stat/stat.component';
 import { AppHeaderComponent } from './components/app-header/app-header.component';
 import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 import { LineChartComponent } from './components/line-chart/line-chart.component';
+import { SpinnerComponent } from './components/spinner/spinner.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { LineChartComponent } from './components/line-chart/line-chart.component
     StatComponent,
     AppHeaderComponent,
     PieChartComponent,
-    LineChartComponent
+    LineChartComponent,
+    SpinnerComponent
   ],
   imports: [BrowserModule, AppRoutingModule],
   providers: [provideHttpClient()],

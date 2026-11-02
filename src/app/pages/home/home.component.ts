@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, combineLatest, map, of } from 'rxjs';
+import { catchError, combineLatest, map, of, startWith } from 'rxjs';
 import { PieChart } from 'src/app/models/pie-chart';
 import {PageHeader} from 'src/app/models/page-header';
 import {Stat} from 'src/app/models/stat';
@@ -26,6 +26,7 @@ export class HomeComponent {
         new Stat('Total JOs', totalJOs)
       ])
     })),
+    startWith({status: 'loading' as const}),
     catchError(error => {
       console.error('Unable to load Olympic page header data.', error);
       return of({status: 'error' as const});
@@ -40,6 +41,7 @@ export class HomeComponent {
       status: 'ready' as const,
       pieChart: new PieChart('Medals', 'DashboardPieChart', countries, totalMedals)
     })),
+    startWith({status: 'loading' as const}),
     catchError(error => {
       console.error('Unable to load Olympic pie chart data.', error);
       return of({status: 'error' as const});
