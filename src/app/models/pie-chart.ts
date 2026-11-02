@@ -28,7 +28,8 @@ export class PieChart {
                 }],
             },
             options: {
-                aspectRatio: 2.5,
+                responsive: true,
+                maintainAspectRatio: false,
                 onClick: (_event, elements) => this.onCountryClick(elements, emitCountry),
             }
         });
