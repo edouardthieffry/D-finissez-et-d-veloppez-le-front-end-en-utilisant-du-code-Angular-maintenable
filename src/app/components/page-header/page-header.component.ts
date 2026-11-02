@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import type { PageHeader } from 'src/app/models/page-header';
 
 @Component({
@@ -7,7 +8,18 @@ import type { PageHeader } from 'src/app/models/page-header';
   styleUrl: './page-header.component.scss'
 })
 export class PageHeaderComponent implements OnInit {
+  private readonly _router = inject(Router);
+
   @Input() pageHeader!: PageHeader;
+
+  isHome(): boolean {
+    return this._router.isActive('/', {
+      paths: 'exact',
+      queryParams: 'ignored',
+      fragment: 'ignored',
+      matrixParams: 'ignored'
+    });
+  }
 
   ngOnInit(): void {
   }

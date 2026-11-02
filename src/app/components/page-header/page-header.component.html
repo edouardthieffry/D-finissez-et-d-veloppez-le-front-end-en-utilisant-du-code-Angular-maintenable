@@ -1,3 +1,7 @@
-
+@if (!isHome()) {
+  <div class="center">
+      <button class="back-button" type="button" routerLink="/">Go back</button>
+  </div>
+}
 <div class="center"><div>{{ pageHeader.title }}</div></div>
 <app-stat-list [stats]="pageHeader.stats" class="split"/>
