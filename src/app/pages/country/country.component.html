@@ -1,5 +1,6 @@
 @if (viewModel$ | async; as viewModel) {
   @if (viewModel.status === 'ready') {
+    <button class="back-button" type="button" routerLink="/">Go back</button>
     <app-page-header [pageHeader]="viewModel.pageHeader"></app-page-header>
     <app-line-chart [lineChart]="viewModel.lineChart"></app-line-chart>
   } @else if (viewModel.status === 'loading') {
