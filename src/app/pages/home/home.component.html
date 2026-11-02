@@ -1,22 +1,15 @@
-@if (pageHeader$ | async; as pageHeaderState) {
-  @if (pageHeaderState.status === 'ready') {
-    <app-page-header [pageHeader]="pageHeaderState.pageHeader"></app-page-header>
-  } @else if (pageHeaderState.status === 'loading') {
-    <app-spinner label="Chargement des statistiques…"></app-spinner>
+@if (dashboard$ | async; as dashboard) {
+  @if (dashboard.status === 'ready') {
+    <div class="dashboard-content">
+      <app-page-header [pageHeader]="dashboard.pageHeader"></app-page-header>
+      <app-pie-chart
+        [pieChart]="dashboard.pieChart"
+        (countrySelected)="onCountrySelected($event)">
+      </app-pie-chart>
+    </div>
+  } @else if (dashboard.status === 'loading') {
+    <app-spinner label="Chargement des données olympiques…"></app-spinner>
   } @else {
-    <p role="alert">Impossible de charger les statistiques. Réessayez plus tard.</p>
-  }
-}
-
-@if (pieChart$ | async; as pieChartState) {
-  @if (pieChartState.status === 'ready') {
-    <app-pie-chart
-      [pieChart]="pieChartState.pieChart"
-      (countrySelected)="onCountrySelected($event)">
-    </app-pie-chart>
-  } @else if (pieChartState.status === 'loading') {
-    <app-spinner label="Chargement du graphique…"></app-spinner>
-  } @else {
-    <p role="alert">Impossible de charger le graphique. Réessayez plus tard.</p>
+    <p role="alert">Impossible de charger les données olympiques. Réessayez plus tard.</p>
   }
 }
