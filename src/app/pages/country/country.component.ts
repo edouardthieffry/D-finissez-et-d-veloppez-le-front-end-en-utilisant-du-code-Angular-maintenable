@@ -1,12 +1,22 @@
+import {AsyncPipe} from '@angular/common';
 import {Component, inject} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {catchError, combineLatest, map, of, startWith, switchMap} from 'rxjs';
+import {LineChartComponent} from 'src/app/components/line-chart/line-chart.component';
+import {PageHeaderComponent} from 'src/app/components/page-header/page-header.component';
+import {SpinnerComponent} from 'src/app/components/spinner/spinner.component';
 import { LineChart } from 'src/app/models/line-chart';
-import type { PageHeader } from 'src/app/models/page-header';
 import {DataOlympicService} from 'src/app/services/olympic.service';
 
 @Component({
   selector: 'app-country',
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    LineChartComponent, 
+    PageHeaderComponent, 
+    SpinnerComponent
+  ],
   templateUrl: './country.component.html',
   styleUrls: ['./country.component.scss']
 })
@@ -47,9 +57,9 @@ export class CountryComponent {
                 data.chartData.medals
               )
             }))
-          ).pipe(startWith({status: 'loading' as const}));
-        }),
-      );
+          );
+        })
+      ).pipe(startWith({status: 'loading' as const}));
     }),
     catchError(error => {
       console.error('Unable to load country data.', error);

@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-
-import { CountryComponent } from "./country.component";
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { of } from 'rxjs';
+import { CountryComponent } from './country.component';
+import { DataOlympicService } from 'src/app/services/olympic.service';
 
 describe('DetailComponent', () => {
   let component: CountryComponent;
@@ -9,13 +10,20 @@ describe('DetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CountryComponent ]
+      imports: [CountryComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: { paramMap: of(convertToParamMap({ countryName: 'Canada' })) }
+        },
+        { provide: DataOlympicService, useValue: {} }
+      ]
     })
     .compileComponents();
 
     fixture = TestBed.createComponent(CountryComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {

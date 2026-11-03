@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable, of, shareReplay, switchMap, throwError } from 'rxjs';
+import { map, Observable, of, shareReplay, switchMap, throwError, delay } from 'rxjs';
 import type { Country } from '../models/country';
 import type { CountryChartData, OlympicChartData } from '../models/chart-data';
 import type { Statistics } from '../models/stat';
@@ -21,49 +21,53 @@ export class DataOlympicService {
 
   getCountryDataByName(countryName: string): Observable<Country | undefined> {
     return this._olympicData$.pipe(
-      map(countries => countries.find(country => country.country === countryName))
+        delay(1000), // Simulate a delay for loading state
+        map(countries => countries.find(country => country.country === countryName))
     );
   }
 
   getParticipationDataByCountryId(countryName: string): Observable<Participation[]> {
     return this.getCountryDataByName(countryName).pipe(
-      switchMap(country => {
-        if (!country) {
-          return throwError(() => new Error(`Country ${countryName} not found.`));
-        }
-        if (country.participations.length === 0) {
-          return throwError(() => new Error(`No participation data found for country ${countryName}.`));
-        }
-        return of(country.participations);
-      })
+    
+        switchMap(country => {
+            if (!country) {
+            return throwError(() => new Error(`Country ${countryName} not found.`));
+            }
+            if (country.participations.length === 0) {
+            return throwError(() => new Error(`No participation data found for country ${countryName}.`));
+            }
+            return of(country.participations);
+        })
     );
   }
 
   getCountryChartData(countryName: string): Observable<CountryChartData> {
     return this.getParticipationDataByCountryId(countryName).pipe(
-      map(participations => ({
-        years: participations.map(participation => participation.year),
-        medals: participations.map(participation => participation.medalsCount)
-      }))
+        map(participations => ({
+            years: participations.map(participation => participation.year),
+            medals: participations.map(participation => participation.medalsCount)
+        }))
     );
   }
 
   getOlympicChartData(): Observable<OlympicChartData> {
     return this._olympicData$.pipe(
-      map(countries => ({
-        countries: countries.map(country => country.country),
-        medals: countries.map(country =>
-          country.participations.reduce(
-            (total, participation) => total + participation.medalsCount,
-            0
-          )
-        )
-      }))
+        delay(1000), // Simulate a delay for loading state
+        map(countries => ({
+            countries: countries.map(country => country.country),
+            medals: countries.map(country =>
+            country.participations.reduce(
+                (total, participation) => total + participation.medalsCount,
+                0
+            )
+            )
+        }))
     );
   }
 
   getOlympicStatistics(): Observable<Statistics> {
     return this._olympicData$.pipe(
+      delay(1000), // Simulate a delay for loading state
       map(countries => ({
         stats: [
           { title: 'Total Countries', value: countries.length },

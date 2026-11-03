@@ -3,6 +3,7 @@ import type { PieChart } from 'src/app/models/pie-chart';
 
 @Component({
   selector: 'app-pie-chart',
+  standalone: true,
   templateUrl: './pie-chart.component.html',
   styleUrl: './pie-chart.component.scss'
 })
