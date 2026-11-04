@@ -23,6 +23,7 @@ src/app/
 ├── components/                  # composants réutilisables
 │   ├── app-header/              # header de l'app avec navigation 
 │   ├── stat/                    # Stats item title + value 
+│   ├── stat-list/               # Stats list
 │   ├── page-header/             # Title + liste Stats item title + value 
 │   ├── pie-chart/               # Diagramme Chart + navigation
 │   ├── line-chart/              # Diagramme courbe 
