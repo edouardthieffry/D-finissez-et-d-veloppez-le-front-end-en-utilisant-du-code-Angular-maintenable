@@ -1,2 +1,15 @@
-<app-page-header [pageHeader]="pageHeader"/>
-<app-pie-chart [pieChart]="pieChart" (countrySelected)="onCountrySelected($event)"/>
+@if (dashboard$ | async; as dashboard) {
+  @if (dashboard.status === 'ready') {
+    <div class="dashboard-content">
+      <app-page-header [pageHeader]="dashboard.pageHeader"></app-page-header>
+      <app-pie-chart
+        [pieChart]="dashboard.pieChart"
+        (countrySelected)="onCountrySelected($event)">
+      </app-pie-chart>
+    </div>
+  } @else if (dashboard.status === 'loading') {
+    <app-spinner label="Chargement des données olympiques…"></app-spinner>
+  } @else {
+    <p role="alert">Impossible de charger les données olympiques. Réessayez plus tard.</p>
+  }
+}

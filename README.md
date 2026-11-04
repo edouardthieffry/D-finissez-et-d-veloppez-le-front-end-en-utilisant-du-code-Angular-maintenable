@@ -1,29 +1,71 @@
-# OlympicGamesStarter
+# Olympic Games Dashboard
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.6.
+An Angular application displaying Olympic statistics by country. The dashboard shows the number of countries, the number of editions, and a pie chart of medals. Each country's page displays its statistics and medal history by edition.
 
-Don't forget to install your node_modules before starting (`npm install`).
+## Technologies & Dependencies
 
-## Development server
+- Angular 18
+- TypeScript
+- RxJS and `HttpClient` for asynchronous data loading
+- Chart.js for charts
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Prerequisites
 
-## Build
+- Node.js and npm
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Installation
 
-## Where to start
+1. Clone the repository.
+2. Change to the project directory.
+3. Install the project dependencies:
 
-As you can see, an architecture has already been defined for the project. It is just a suggestion, you can choose to use your own. The predefined architecture includes (in addition to the default angular architecture) the following:
+   ```bash
+   npm install
+   ```
 
-- `components` folder: contains every reusable components
-- `pages` folder: contains components used for routing
-- `core` folder: contains the business logic (`services` and `models` folders)
+4. Start the development server:
 
-I suggest you to start by understanding this starter code. Pay an extra attention to the `app-routing.module.ts` and the `olympic.service.ts`.
+   ```bash
+   ng serve
+   ```
 
-Once mastered, you should continue by creating the typescript interfaces inside the `models` folder. As you can see I already created two files corresponding to the data included inside the `olympic.json`. With your interfaces, improve the code by replacing every `any` by the corresponding interface.
+5. Open the URL provided by `ng serve` in your browser, for example [http://localhost:4200](http://localhost:4200).
 
-You're now ready to implement the requested features.
+## Development
 
-Good luck!
+Run `ng serve` to start the development server, then navigate to [http://localhost:4200](http://localhost:4200). The application automatically reloads when source files change.
+
+## Data
+
+The demo data is stored in [`src/assets/mock/olympic.json`](src/assets/mock/olympic.json). The [`DataOlympicService`](src/app/services/olympic.service.ts) loads it with `HttpClient` and exposes observables for countries, participations, and statistics.
+
+Components consume observables with the `async` pipe. To connect a backend in the future, replace the data URL in the service with the API URL while keeping the methods and types expected by the UI.
+
+## Navigation
+
+- `/`: main dashboard
+- `/country/:countryName`: country details, for example `/country/Italy`
+- Other routes display the not-found page.
+
+## Code Structure
+
+```text
+src/
+├── assets/mock/olympic.json     # Demo data
+└── app/
+    ├── components/              # Header, statistics, charts, and spinner
+    ├── models/                  # Data types and chart configuration
+    ├── pages/                   # Home, country details, and not-found pages
+    ├── services/                # Data loading and calculations
+    ├── app-routing.module.ts    # Application routes
+    └── app.module.ts            # Application declarations and configuration
+```
+
+## Available Commands
+
+```bash
+npm start       # Start the Angular development server
+npm run build   # Build the application into dist/
+npm test        # Run unit tests with Karma
+npm run watch   # Rebuild the application whenever files change
+```

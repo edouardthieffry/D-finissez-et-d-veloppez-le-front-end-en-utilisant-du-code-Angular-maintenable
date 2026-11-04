@@ -14,6 +14,7 @@ export class PieChart {
         this.labels = labels;
         this.data = data;
     }
+
     buildChart(emitCountry: (countryName: string) => void){
         this.chart = new Chart(this.canvasId, {
             type: 'pie',
@@ -27,10 +28,10 @@ export class PieChart {
                 }],
             },
             options: {
-                aspectRatio: 2.5,
+                responsive: true,
+                maintainAspectRatio: false,
                 onClick: (_event, elements) => this.onCountryClick(elements, emitCountry),
             }
-            
         });
     }
 

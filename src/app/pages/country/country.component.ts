@@ -1,43 +1,69 @@
-import {Component, OnInit} from '@angular/core';
-import { Router } from '@angular/router';
-import {ActivatedRoute, ParamMap} from '@angular/router';
-import {LineChart} from 'src/app/models/line-chart';
-import {PageHeader} from 'src/app/models/page-header';
-import {Stat} from 'src/app/models/stat';
+import {AsyncPipe} from '@angular/common';
+import {Component, inject} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {catchError, combineLatest, map, of, startWith, switchMap} from 'rxjs';
+import {LineChartComponent} from 'src/app/components/line-chart/line-chart.component';
+import {PageHeaderComponent} from 'src/app/components/page-header/page-header.component';
+import {SpinnerComponent} from 'src/app/components/spinner/spinner.component';
+import { LineChart } from 'src/app/models/line-chart';
 import {DataOlympicService} from 'src/app/services/olympic.service';
 
 @Component({
   selector: 'app-country',
+  standalone: true,
+  imports: [
+    AsyncPipe,
+    LineChartComponent, 
+    PageHeaderComponent, 
+    SpinnerComponent
+  ],
   templateUrl: './country.component.html',
   styleUrls: ['./country.component.scss']
 })
-export class CountryComponent implements OnInit {
-  constructor(private route: ActivatedRoute, private dataOlympicService: DataOlympicService, private router: Router) {
-  }
+export class CountryComponent {
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _dataOlympicService = inject(DataOlympicService);
+  private readonly _router = inject(Router);
 
-  pageHeader !: PageHeader;
-  statList !: Stat[];
-  lineChart!: LineChart;
+  public readonly viewModel$ = this._route.paramMap.pipe(
+    switchMap(params => {
+      const countryName = params.get('countryName');
+      if (!countryName) {
+        void this._router.navigate(['/not-found']);
+        return of({status: 'not-found' as const});
+      }
 
-  ngOnInit() {
-  const countryName = this.route.snapshot.paramMap.get('countryName');
-  const countries = this.dataOlympicService.getArrayOfCountries();
+      return this._dataOlympicService.getCountryDataByName(countryName).pipe(
+        switchMap(country => {
+          if (!country) {
+            void this._router.navigate(['/not-found']);
+            return of({status: 'not-found' as const});
+          }
 
-  if (!countryName || !countries.includes(countryName)) {
-    this.router.navigate(['/not-found']);
-    return;
-  }
-    
-    this.pageHeader = new PageHeader(countryName, [
-        new Stat("Total participations", this.dataOlympicService.getCountryTotalParticipations(countryName!)),
-        new Stat("Total medals", this.dataOlympicService.getCountryTotalMedals(countryName!)),
-        new Stat("Total athletes", this.dataOlympicService.getCountryTotalAthletes(countryName!))
-    ]);
-    this.lineChart = new LineChart(
-      'countryChart',
-      'Medals',
-      this.dataOlympicService.getArrayOfYearsByCountryId(countryName!),
-      this.dataOlympicService.getArrayOfMedalsByParticipationCountryId(countryName!),
-    );
-  }
+          return combineLatest({
+            stats: this._dataOlympicService.getStatisticsByCountry(countryName),
+            chartData: this._dataOlympicService.getCountryChartData(countryName)
+          }).pipe(
+            map(data => ({
+              status: 'ready' as const,
+              pageHeader: {
+                title: country.country,
+                stats: data.stats?.stats ?? []
+              },
+              lineChart: new LineChart(
+                'countryChart',
+                'Medals',
+                data.chartData.years,
+                data.chartData.medals
+              )
+            }))
+          );
+        })
+      ).pipe(startWith({status: 'loading' as const}));
+    }),
+    catchError(error => {
+      console.error('Unable to load country data.', error);
+      return of({status: 'error' as const});
+    })
+  );
 }

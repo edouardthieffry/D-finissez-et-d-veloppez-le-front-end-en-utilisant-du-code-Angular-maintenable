@@ -1,102 +1,111 @@
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Injectable, Input } from '@angular/core';
-import { Country } from '../models/country';
-import { Participation } from '../models/participation';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { map, Observable, of, shareReplay, switchMap, throwError, delay } from 'rxjs';
+import type { Country } from '../models/country';
+import type { CountryChartData, OlympicChartData } from '../models/chart-data';
+import type { Statistics } from '../models/stat';
+import type { Participation } from '../models/participation';
+
 @Injectable({
   providedIn: 'root'
 })
 export class DataOlympicService {
-    private olympicData = [
-        new Country(1, "Italy", [
-            new Participation(1, 2012, "Londres", 28, 372),
-            new Participation(2, 2016, "Rio de Janeiro", 28, 375),
-            new Participation(3, 2020, "Tokyo", 40, 381),
-        ]),
-        new Country(2, "Spain", [
-            new Participation(1, 2012, "Londres", 20, 315),
-            new Participation(2, 2016, "Rio de Janeiro", 17, 312),
-            new Participation(3, 2020, "Tokyo", 17, 321),
-        ]),
-        new Country(3, "United States", [
-            new Participation(1, 2012, "Londres", 109, 610),
-            new Participation(2, 2016, "Rio de Janeiro", 123, 652),
-            new Participation(3, 2020, "Tokyo", 113, 626),
-        ]),
-        new Country(4, "Germany", [
-            new Participation(1, 2012, "Londres", 44, 425),
-            new Participation(2, 2016, "Rio de Janeiro", 44, 422),
-            new Participation(3, 2020, "Tokyo", 37, 425),
-        ]),
-        new Country(5, "France", [
-            new Participation(1, 2012, "Londres", 35, 423),
-            new Participation(2, 2016, "Rio de Janeiro", 45, 412),
-            new Participation(3, 2020, "Tokyo", 33, 403),
-        ]),
-    ];
-    
-    getCountryDataById(countryName: string): Country {
-        const country = this.olympicData.find(country => country.country === countryName);
-        if (!country) {
-            throw new Error(`Country with ID ${countryName} not found.`);
-        }
-        return country;
-    }
+  private readonly _http = inject(HttpClient);
+  private readonly _olympicData$: Observable<Country[]> = this._http
+    .get<Country[]>('assets/mock/olympic.json')
+    .pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
-    getParticipationDataByCountryId(countryName: string): Participation[] {
-        const country = this.getCountryDataById(countryName);
-        if(!country.participations || country.participations.length === 0) {
-            throw new Error(`No participation data found for country with ID ${countryName}.`);
-        }
-        return country.participations;
-    }
+  getOlympicsData(): Observable<Country[]> {
+    return this._olympicData$;
+  }
 
-    getCountryTotalMedals(countryName: string): number {
-        const participations = this.getParticipationDataByCountryId(countryName);
-        return participations.reduce((total, participation) => total + participation.medalsCount, 0);
-    }
-    
-    getCountryTotalAthletes(countryName: string): number {
-        const participations = this.getParticipationDataByCountryId(countryName);
-        return participations.reduce((total, participation) => total + participation.athleteCount, 0);
-    }
-    getCountryTotalParticipations(countryName: string): number {
-        const participations = this.getParticipationDataByCountryId(countryName);
-        return participations.length;
-    }
-    getArrayOfYearsByCountryId(countryName: string): number[] {
-        const participations = this.getParticipationDataByCountryId(countryName);
-        return participations.map(participation => participation.year);
-    }
-    
-    getArrayOfMedalsByParticipationCountryId(countryName: string): number[] {
-        const participations = this.getParticipationDataByCountryId(countryName);
-        return participations.map(participation => participation.medalsCount);
-    }
+  getCountryDataByName(countryName: string): Observable<Country | undefined> {
+    return this._olympicData$.pipe(
+        delay(1000), // Simulate a delay for loading state
+        map(countries => countries.find(country => country.country === countryName))
+    );
+  }
 
-    getYearEdition(): number[] {
-        const yearEdition: number[] = [];
-        this.olympicData.forEach(country => {
-            country.participations.forEach(participation => {
-                if (!yearEdition.includes(participation.year)) {
-                    yearEdition.push(participation.year);
-                }
+  getParticipationDataByCountryId(countryName: string): Observable<Participation[]> {
+    return this.getCountryDataByName(countryName).pipe(
+    
+        switchMap(country => {
+            if (!country) {
+            return throwError(() => new Error(`Country ${countryName} not found.`));
+            }
+            if (country.participations.length === 0) {
+            return throwError(() => new Error(`No participation data found for country ${countryName}.`));
+            }
+            return of(country.participations);
+        })
+    );
+  }
+
+  getCountryChartData(countryName: string): Observable<CountryChartData> {
+    return this.getParticipationDataByCountryId(countryName).pipe(
+        map(participations => ({
+            years: participations.map(participation => participation.year),
+            medals: participations.map(participation => participation.medalsCount)
+        }))
+    );
+  }
+
+  getOlympicChartData(): Observable<OlympicChartData> {
+    return this._olympicData$.pipe(
+        delay(1000), // Simulate a delay for loading state
+        map(countries => ({
+            countries: countries.map(country => country.country),
+            medals: countries.map(country =>
+            country.participations.reduce(
+                (total, participation) => total + participation.medalsCount,
+                0
+            )
+            )
+        }))
+    );
+  }
+
+  getOlympicStatistics(): Observable<Statistics> {
+    return this._olympicData$.pipe(
+      delay(1000), // Simulate a delay for loading state
+      map(countries => ({
+        stats: [
+          { title: 'Total Countries', value: countries.length },
+          {
+            title: 'Total JOs',
+            value: new Set(countries.flatMap(country =>
+              country.participations.map(participation => participation.year)
+            )).size
+          }
+        ]
+      }))
+    );
+  }
+
+  getStatisticsByCountry(countryName: string): Observable<Statistics> {
+    return this.getCountryDataByName(countryName).pipe(
+        switchMap(country => {
+            if (!country) {
+                return of({ stats: [] });
+            }
+            const totalParticipations = country.participations.length;
+            const totalMedals = country.participations.reduce(
+                (total, participation) => total + participation.medalsCount,
+                0
+            );
+            const totalAthletes = country.participations.reduce(
+                (total, participation) => total + participation.athleteCount,
+                0
+            );
+
+            return of({
+                stats: [
+                    { title: 'Total Participations', value: totalParticipations },
+                    { title: 'Total Medals', value: totalMedals },
+                    { title: 'Total Athletes', value: totalAthletes }
+                ]
             });
-        });
-        return yearEdition;
-    }
-
-    getTotalJOs(): number {
-        return this.getYearEdition().length;
-    }
-    getTotalCountries(): number {
-        return this.olympicData.length;
-    }
-    getArrayTotalMedalsByCountry(): number[] {
-        return this.olympicData.map(country => this.getCountryTotalMedals(country.country));
-    }
-    getArrayOfCountries(): string[] {
-        return this.olympicData.map(country => country.country);
-    }
-
+        })
+    );
+  }
 }
