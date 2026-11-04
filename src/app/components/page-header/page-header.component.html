@@ -3,5 +3,7 @@
       <button class="back-button" type="button" routerLink="/">Go back</button>
   </div>
 }
-<div class="center"><div>{{ pageHeader.title }}</div></div>
+<div class="center">
+  <h2 class="page-title">{{ pageHeader.title }}</h2>
+</div>
 <app-stat-list [stats]="pageHeader.stats" class="split"/>

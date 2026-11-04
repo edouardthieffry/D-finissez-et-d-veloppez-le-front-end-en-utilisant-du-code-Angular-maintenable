@@ -46,3 +46,26 @@ body {
     }
 
 }
+
+@media (max-width: 600px) {
+    .split {
+        flex-wrap: wrap;
+        gap: 12px;
+
+        > app-stat {
+            flex: 1 1 9rem;
+            min-width: 0;
+        }
+
+        .stat-item {
+            box-sizing: border-box;
+            height: 100%;
+        }
+
+        p {
+            font-size: clamp(0.875rem, 3.5vw, 1rem);
+            line-height: 1.35;
+            overflow-wrap: anywhere;
+        }
+    }
+}
