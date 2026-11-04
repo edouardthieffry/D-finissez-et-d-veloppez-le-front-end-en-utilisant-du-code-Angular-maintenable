@@ -24,7 +24,7 @@ src/app/
 │   ├── page-header/             # Title + liste Stats item title + value 
 │   ├── pie-chart/               # Diagramme Chart 
 │   ├── line-chart/              # Diagramme courbe 
-│   └── loading/                 # indicateur de chargement (spinner)
+│   └── spinner/                 # indicateur de chargement (spinner)
 │
 └── pages/                       # composants routés (un par écran)
     ├── home/                    # dashboard : pie chart + stats
